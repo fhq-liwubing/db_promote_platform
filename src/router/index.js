@@ -4,7 +4,9 @@ import Router from 'vue-router'
 /* layout */
 import Layout from '../views/layout/Layout'
 
+
 const _import = require('./_import_' + process.env.NODE_ENV)
+
 Vue.use(Router)
 export const constantRouterMap = [
   {path: '/login', component: _import('login/index'), hidden: true},
@@ -30,15 +32,27 @@ export const asyncRouterMap = [
     path: '/system',
     component: Layout,
     redirect: '/system/article',
-    name: '功能模块',
-    meta: {title: '功能模块', icon: 'tree'},
+    name: '客户端管理',
+    meta: {title: '客户端管理', icon: 'tree'},
     children: [
       {
-        path: 'article',
-        name: '导入数据',
-        component: _import('article/article'),
-        meta: {title: '导入数据', icon: 'example'},
-        menu: 'article'
+        path: 'employee',
+        name: '员工维护',
+        component: _import('employee/employee'),
+        meta: {title: '员工维护', icon: 'user'},
+        menu: '员工维护'
+      }, {
+        path: 'terminal',
+        name: '终端维护',
+        component: _import('terminal/terminal'),
+        meta: {title: '终端维护', icon: 'user'},
+        menu: '终端维护'
+      },{
+        path: 'package',
+        name: '任务包维护',
+        component: _import('task/package'),
+        meta: {title: '任务包维护', icon: 'example'},
+        menu: '任务包维护'
       },
     ]
   },
@@ -59,6 +73,63 @@ export const asyncRouterMap = [
         meta: {title: '权限管理', icon: 'password'},
         menu: 'role'
       },
+    ]
+  }, {
+    path: '/company',
+    component: Layout,
+    redirect: '/company/',
+    name: '',
+    meta: {title: '客户资料管理', icon: 'table'},
+    children: [
+      {
+        path: 'companyOrigin',
+        name: '客户资料来源',
+        component: _import('company/companyOrigin'),
+        meta: {title: '客户资料来源', icon: 'user'},
+        menu: '客户资料来源'
+      }, {
+        path: 'company',
+        name: '客户资料',
+        component: _import('company/company'),
+        meta: {title: '客户资料', icon: 'example'},
+        menu: '客户资料'
+      },
+    ]
+  }, {
+    path: '/statistical',
+    component: Layout,
+    redirect: '/statistical/',
+    name: '',
+    meta: {title: '统计管理', icon: 'table'},
+    children: [
+      {
+        path: 'taskFlsh',
+        name: '任务完成度统计',
+        component: _import('task/taskFlsh'),
+        meta: {title: '任务完成度统计', icon: 'example'},
+        menu: '任务完成度统计'
+      },{
+        path: 'intentionCompany',
+        name: '意向客户查询',
+        component: _import('task/intentionCompany'),
+        meta: {title: '意向客户查询', icon: 'example'},
+        menu: '意向客户查询'
+      },
+    ]
+  },{
+    path: '/sms',
+    component: Layout,
+    redirect: '/sms/',
+    name: '',
+    meta: {title: '短信管理', icon: 'table'},
+    children: [
+      {
+        path: 'sms',
+        name: '短信模块维护',
+        component: _import('sms/sms'),
+        meta: {title: '短信模块维护', icon: 'example'},
+        menu: '短信模块维护'
+      }
     ]
   },
   {path: '*', redirect: '/404', hidden: true}

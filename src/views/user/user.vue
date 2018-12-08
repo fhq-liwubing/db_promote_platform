@@ -127,6 +127,7 @@
           url: "/user/getAllRoles",
           method: "get"
         }).then(data => {
+          console.log(data);
           this.roles = data.list;
         })
       },
