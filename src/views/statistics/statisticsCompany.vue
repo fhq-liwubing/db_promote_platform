@@ -3,8 +3,8 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="公司名称">
-              <el-input  placeholder="公司名称" v-model="listQuery.username"></el-input>
+            <el-form-item label="终端识别码">
+              <el-input  placeholder="终端识别码" v-model="listQuery.username"></el-input>
             </el-form-item>
              <el-form-item label="员工姓名">
               <el-input  placeholder="员工姓名" v-model="listQuery.employeeNo"></el-input>
@@ -26,18 +26,14 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="公司名称" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="employeeNo" label="省份" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_acc_name" label="城市" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="联系人姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="手机号" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="公司地址" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="所属员工" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="通话时间" width="170">
-        <template slot-scope="scope">
-          <span>{{scope.row.f_create_time}}</span>
-        </template>
-      </el-table-column>
+      <el-table-column align="center" prop="username" label="员工姓名" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="employeeNo" label="终端识别号" style="width: 60px;"></el-table-column>
+      
+      <el-table-column align="center" prop="f_acc_name" label="电话完成度" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="微信完成度" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="短信完成度" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="资料补全完成度" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="总数量" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">查看详情</el-button>

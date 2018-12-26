@@ -26,11 +26,13 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="终端登陆号" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="password" label="终端登陆密码" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="employeeName" label="员工姓名" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="password" label="激活码" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="employeeName" label="设备所属省份" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="employeeName" label="设备所属城市" style="width: 60px;"></el-table-column>
+       <el-table-column align="center" prop="city" label="负责区域" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="status" label="状态" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="updateTime" label="员工姓名" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.createTime}}</span>

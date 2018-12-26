@@ -3,16 +3,11 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="任务名称">
-              <el-input  placeholder="任务名称" v-model="listQuery.username"></el-input>
+            <el-form-item label="终端登陆号">
+              <el-input  placeholder="终端登陆号" v-model="listQuery.username"></el-input>
             </el-form-item>
-             <el-form-item label="属性">
-              <el-select v-model="listQuery.attribute">
-                <el-option label="电话任务" value="1"></el-option>
-                <el-option label="短信任务" value="0"></el-option>
-                <el-option label="资料补全任务" value="0"></el-option>
-                <el-option label="微信任务" value="0"></el-option>
-            </el-select>
+             <el-form-item label="员工姓名">
+              <el-input  placeholder="员工姓名" v-model="listQuery.employeeName"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
@@ -31,19 +26,17 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="员工姓名" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="employeeNo" label="任务包名称" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_acc_name" label="任务总数量" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="属性" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
+      <el-table-column align="center" prop="password" label="绑定手机号" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" label="分配时间" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.f_create_time}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
         <template slot-scope="scope">
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">查看完成情况</el-button>
+          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -96,8 +89,8 @@
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
-          update: '修改员工',
-          create: '创建员工'
+          update: '修改终端',
+          create: '创建终端'
         },
         tempArticle: {
           id: "",

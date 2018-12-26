@@ -3,25 +3,20 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="任务名称">
-              <el-input  placeholder="任务名称" v-model="listQuery.username"></el-input>
+            <el-form-item label="公司名称">
+              <el-input  placeholder="公司名称" v-model="listQuery.username"></el-input>
             </el-form-item>
-             <el-form-item label="属性">
-              <el-select v-model="listQuery.attribute">
-                <el-option label="电话任务" value="1"></el-option>
-                <el-option label="短信任务" value="0"></el-option>
-                <el-option label="资料补全任务" value="0"></el-option>
-                <el-option label="微信任务" value="0"></el-option>
-            </el-select>
+             <el-form-item label="员工姓名">
+              <el-input  placeholder="员工姓名" v-model="listQuery.employeeNo"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
             </el-form-item>
            <br> 
-        <el-form-item>
+       <!-- <el-form-item>
           <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">添加
           </el-button>
-        </el-form-item> 
+        </el-form-item> -->
       </el-form>
     </div>
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
@@ -31,19 +26,24 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="员工姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="employeeNo" label="任务包名称" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_acc_name" label="任务总数量" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="属性" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
+      <el-table-column align="center" prop="username" label="公司名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="employeeNo" label="省份" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_acc_name" label="城市" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="联系人" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="手机号" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="公司地址" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="所属员工" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="所属终端" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="标签" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_phone" label="上次通话时间" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" label="下次通话时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.f_create_time}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
         <template slot-scope="scope">
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">查看完成情况</el-button>
+          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">查看详情</el-button>
         </template>
       </el-table-column>
     </el-table>

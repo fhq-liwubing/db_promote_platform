@@ -28,34 +28,7 @@ export default new Router({
   routes: constantRouterMap
 })
 export const asyncRouterMap = [
-  {
-    path: '/system',
-    component: Layout,
-    redirect: '/system/article',
-    name: '客户端管理',
-    meta: {title: '客户端管理', icon: 'tree'},
-    children: [
-      {
-        path: 'employee',
-        name: '员工维护',
-        component: _import('employee/employee'),
-        meta: {title: '员工维护', icon: 'user'},
-        menu: '员工维护'
-      }, {
-        path: 'terminal',
-        name: '终端维护',
-        component: _import('terminal/terminal'),
-        meta: {title: '终端维护', icon: 'user'},
-        menu: '终端维护'
-      },{
-        path: 'package',
-        name: '任务包维护',
-        component: _import('task/package'),
-        meta: {title: '任务包维护', icon: 'example'},
-        menu: '任务包维护'
-      },
-    ]
-  },
+  
   {
     path: '/user',
     component: Layout,
@@ -73,6 +46,72 @@ export const asyncRouterMap = [
         meta: {title: '权限管理', icon: 'password'},
         menu: 'role'
       },
+    ]
+  },{
+    path: '/system',
+    component: Layout,
+    redirect: '/system/article',
+    name: '客户端管理',
+    meta: {title: '客户端管理', icon: 'tree'},
+    children: [
+      {
+        path: 'employee',
+        name: '员工管理',
+        component: _import('employee/employee'),
+        meta: {title: '员工管理', icon: 'user'},
+        menu: '员工管理'
+      }, {
+        path: 'terminal',
+        name: '终端管理',
+        component: _import('terminal/terminal'),
+        meta: {title: '终端管理', icon: 'user'},
+        menu: '终端管理'
+      },{
+        path: '',
+        name: '手机号管理',
+        component: _import('terminal/phone'),
+        meta: {title: '手机号管理', icon: 'example'},
+        menu: '手机号管理'
+      },{
+        path: 'activation',
+        name: '激活码',
+        component: _import('terminal/activation'),
+        meta: {title: '激活码', icon: 'example'},
+        menu: '激活码'
+      },{
+        path: 'terminalPhone',
+        name: '手机号分配',
+        component: _import('terminal/terminalPhone'),
+        meta: {title: '手机号分配', icon: 'example'},
+        menu: '手机号分配'
+      },{
+        path: 'terminalEmployee',
+        name: '终端分配',
+        component: _import('terminal/terminalEmployee'),
+        meta: {title: '终端分配', icon: 'example'},
+        menu: '终端分配'
+      },
+    ]
+  },{
+    path: '/sms',
+    component: Layout,
+    redirect: '/task/',
+    name: '',
+    meta: {title: '任务管理', icon: 'table'},
+    children: [
+      {
+        path: 'task',
+        name: '任务包维护',
+        component: _import('task/package'),
+        meta: {title: '任务包维护', icon: 'example'},
+        menu: '任务包维护'
+      }, {
+        path: 'taskFlsh',
+        name: '任务包发配',
+        component: _import('task/taskFlsh'),
+        meta: {title: '任务包发配', icon: 'example'},
+        menu: '任务包发配'
+      }
     ]
   }, {
     path: '/company',
@@ -96,39 +135,57 @@ export const asyncRouterMap = [
       },
     ]
   }, {
-    path: '/statistical',
+    path: '/statistics',
     component: Layout,
-    redirect: '/statistical/',
+    redirect: '/statistics/',
     name: '',
     meta: {title: '统计管理', icon: 'table'},
     children: [
       {
-        path: 'taskFlsh',
+        path: 'statisticsCompany',
         name: '任务完成度统计',
-        component: _import('task/taskFlsh'),
+        component: _import('statistics/statisticsCompany'),
         meta: {title: '任务完成度统计', icon: 'example'},
         menu: '任务完成度统计'
       },{
-        path: 'intentionCompany',
+        path: 'intention',
         name: '意向客户查询',
-        component: _import('task/intentionCompany'),
+        component: _import('statistics/intentionCompany'),
         meta: {title: '意向客户查询', icon: 'example'},
         menu: '意向客户查询'
       },
     ]
   },{
-    path: '/sms',
+    path: '/attribute',
     component: Layout,
-    redirect: '/sms/',
+    redirect: '/attribute/',
     name: '',
-    meta: {title: '短信管理', icon: 'table'},
+    meta: {title: '基础数据管理', icon: 'table'},
     children: [
       {
+        path: 'attribute',
+        name: '任务属性配置',
+        component: _import('attribute/attribute'),
+        meta: {title: '任务属性配置', icon: 'example'},
+        menu: '任务属性配置'
+      }, {
         path: 'sms',
         name: '短信模块维护',
-        component: _import('sms/sms'),
+        component: _import('attribute/sms'),
         meta: {title: '短信模块维护', icon: 'example'},
         menu: '短信模块维护'
+      }, {
+        path: 'mail',
+        name: '通讯录',
+        component: _import('attribute/mail'),
+        meta: {title: '通讯录', icon: 'example'},
+        menu: '通讯录'
+      }, {
+        path: 'file',
+        name: '文件管理',
+        component: _import('attribute/file'),
+        meta: {title: '文件管理', icon: 'example'},
+        menu: '文件管理'
       }
     ]
   },

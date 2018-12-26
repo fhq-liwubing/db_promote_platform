@@ -28,12 +28,13 @@
       </el-table-column>
       <el-table-column align="center" prop="name" label="员工姓名" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="phoneNo" label="手机号" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="email" label="邮箱" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="email" label="年龄" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="sex" label="性别" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="status" label="状态" style="width: 60px;"></el-table-column>
-        <el-table-column align="center" prop="province" label="省份" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="city" label="市" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
+      <el-table-column align="center" prop="status" label="在岗状态" style="width: 60px;"></el-table-column>
+        <el-table-column align="center" prop="province" label="籍贯省份" style="width: 60px;"></el-table-column>
+     
+       <el-table-column align="center" prop="city" label="负责终端数" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" label="入职时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.createTime}}</span>
         </template>

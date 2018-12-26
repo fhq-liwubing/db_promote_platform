@@ -6,8 +6,20 @@
             <el-form-item label="任务名称">
               <el-input  placeholder="任务名称" v-model="listQuery.username"></el-input>
             </el-form-item>
-             <el-form-item label="员工姓名">
-              <el-input  placeholder="员工姓名" v-model="listQuery.employeeNo"></el-input>
+             <el-form-item label="状态">
+              <el-select v-model="listQuery.status">
+                <el-option label="已分配" value="1"></el-option>
+                <el-option label="未分配" value="0"></el-option>
+                <el-option label="已完成" value="0"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="属性">
+              <el-select v-model="listQuery.attribute">
+                <el-option label="电话任务" value="1"></el-option>
+                <el-option label="短信任务" value="0"></el-option>
+                <el-option label="资料补全任务" value="0"></el-option>
+                <el-option label="微信任务" value="0"></el-option>
+            </el-select>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
@@ -26,9 +38,9 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="employeeNo" label="员工姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="username" label="终端登陆号" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_acc_name" label="任务包名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="employeeNo" label="任务包名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="username" label="属性" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="f_acc_name" label="状态" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="f_phone" label="任务总数量" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">

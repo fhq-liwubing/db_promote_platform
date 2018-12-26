@@ -3,23 +3,21 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="任务名称">
-              <el-input  placeholder="任务名称" v-model="listQuery.username"></el-input>
+            <el-form-item label="文件名称">
+              <el-input  placeholder="文件名称" v-model="listQuery.name"></el-input>
             </el-form-item>
-             <el-form-item label="属性">
-              <el-select v-model="listQuery.attribute">
-                <el-option label="电话任务" value="1"></el-option>
-                <el-option label="短信任务" value="0"></el-option>
-                <el-option label="资料补全任务" value="0"></el-option>
-                <el-option label="微信任务" value="0"></el-option>
-            </el-select>
-            </el-form-item>
-            <el-form-item>
+             <el-form-item label="文件所属">
+          <el-select v-model="listQuery.sex" placeholder="文件所属">
+            <el-option label="系统" value="默认模块1"></el-option>
+            <el-option label="个人" value="个人"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
-            </el-form-item>
+         </el-form-item>
            <br> 
         <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">添加
+          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('employee:add')">添加
           </el-button>
         </el-form-item> 
       </el-form>
@@ -31,19 +29,18 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="员工姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="employeeNo" label="任务包名称" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_acc_name" label="任务总数量" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="f_phone" label="属性" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="name" label="文件名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="phoneNo" label="文件路径" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="email" label="文件所属" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="email" label="终端识别码" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.f_create_time}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
+      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('employee:update')">
         <template slot-scope="scope">
-          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">查看完成情况</el-button>
+          <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -57,30 +54,32 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" >
-      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="80px"
+      <el-form class="small-space" :model="tempArticle" ref="tempArticle"  label-position="left" label-width="80px"
                style='width: 300px; margin-left:50px;'>
-        <el-form-item label="员工姓名" prop="name" >
-          <el-input type="input"   v-model="tempArticle.content"> </el-input>
+        <el-form-item label="短信名称" prop="name" 
+         :rules="[{ required: true, message: '短信名称'}]">
+          <el-input type="name"   v-model="tempArticle.name" > </el-input>
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input type="input"  v-model="tempArticle.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="tempArticle.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
+        <el-form-item label="短信类型">
+          <el-select v-model="tempArticle.sex" placeholder="短信类型">
+            <el-option label="默认模块1" value="默认模块1"></el-option>
+            <el-option label="默认模块2" value="默认模块2"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="短信内容" prop="phone" 
+         :rules="[{ required: true, message: '短信内容'}]">
+          <el-input type="phone"  v-model="tempArticle.phone"></el-input>
+        </el-form-item>
+         <el-form-item>
+            <el-button type="primary" @click="createArticle('tempArticle')">提交</el-button>
+        </el-form-item>
+      
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="success" @click="createArticle">创 建</el-button>
-        <!-- <el-button type="primary" v-else @click="updateArticle">修 改</el-button> -->
-      </div>
     </el-dialog>
   </div>
 </template>
 <script>
+
   export default {
     data() {
       return {
@@ -91,8 +90,9 @@
           pageNum: 1,//页码
           pageRow: 50,//每页条数
           name: '',
-          phone: ''
+          phoneNo: ''
         },
+        province: [],//角色列表
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
@@ -112,12 +112,12 @@
     methods: {
       getList() {
         //查询列表
-        if (!this.hasPerm('terminal:list')) {
+        if (!this.hasPerm('employee:list')) {
           return
         }
         this.listLoading = true;
         this.api({
-          url: "/terminal/listTerminal",
+          url: "/employee/listEmployee",
           method: "get",
           params: this.listQuery
         }).then(data => {
@@ -154,16 +154,26 @@
         this.dialogStatus = "update"
         this.dialogFormVisible = true
       },
-      createArticle() {
-        //保存新文章
-        this.api({
-          url: "/article/addArticle",
-          method: "post",
-          data: this.tempArticle
-        }).then(() => {
-          this.getList();
-          this.dialogFormVisible = false
-        })
+      createArticle(formName) {
+        console.log(this.tempArticle.province);
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+
+           //保存新文章
+            this.api({
+              url: "/article/addArticle",
+              method: "post",
+              data: this.tempArticle
+            }).then(() => {
+              this.getList();
+              this.dialogFormVisible = false
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+        
       },
       updateArticle() {
         //修改文章
