@@ -3,11 +3,8 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="终端登陆号">
-              <el-input  placeholder="终端登陆号" v-model="listQuery.username"></el-input>
-            </el-form-item>
-             <el-form-item label="员工姓名">
-              <el-input  placeholder="员工姓名" v-model="listQuery.employeeName"></el-input>
+            <el-form-item label="发送手机号">
+              <el-input  placeholder="发送手机号" v-model="listQuery.receivePhone"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
@@ -26,21 +23,30 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="激活码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="password" label="发送手机号" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="激活状态" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="有效期" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="cdkey" label="激活码" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="receivePhone" label="发送手机号" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" label="激活状态" style="width: 60px;">
+       <template slot-scope="scope">
+          <el-tag type="success"  v-if="scope.row.status===1">已激活</el-tag>
+          <el-tag type="primary"  v-else>未激活</el-tag>
+        </template>    
+     </el-table-column>
+      <el-table-column align="center" prop="validateDays" label="有效期" style="width: 60px;"> </el-table-column>
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+         <span>{{scope.row.createTime.year}}-{{scope.row.createTime.monthValue}}-{{scope.row.createTime.monthValue}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
+       <el-table-column align="center" label="修改时间" width="170">
+        <template slot-scope="scope">
+         <span>{{scope.row.updateTime.year}}-{{scope.row.updateTime.monthValue}}-{{scope.row.updateTime.monthValue}}</span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -52,26 +58,20 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" >
-      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="80px"
-               style='width: 300px; margin-left:50px;'>
-        <el-form-item label="员工姓名" prop="name" >
-          <el-input type="input"   v-model="tempArticle.content"> </el-input>
+      <el-form class="small-space" :model="tempArticle"  ref="tempArticle"   label-position="left" label-width="80px"
+               style='width: 400px; margin-left:50px;'>
+        <el-form-item label="手机号" prop="phone" 
+         :rules="[{ required: true, message: '手机号不能为空'}]">
+          <el-input type="number"  v-model="tempArticle.phone"></el-input>
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input type="input"  v-model="tempArticle.phone"></el-input>
+        <el-form-item label="有效期" prop="days" 
+         :rules="[{ required: true, message: '有效期不能为空'}]">
+          <el-input type="number"  v-model="tempArticle.days"></el-input>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="tempArticle.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
-          </el-select>
+        <el-form-item>
+            <el-button type="primary" @click="createArticle('tempArticle')">提交</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="success" @click="createArticle">创 建</el-button>
-        <!-- <el-button type="primary" v-else @click="updateArticle">修 改</el-button> -->
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -86,17 +86,17 @@
           pageNum: 1,//页码
           pageRow: 50,//每页条数
           name: '',
-          phone: ''
+          receivePhone: ''
         },
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
-          update: '修改终端',
-          create: '创建终端'
+          update: '修改激活码',
+          create: '新建激活码'
         },
         tempArticle: {
           id: "",
-          content: "",
+          days: "",
           phone: ""
         }
       }
@@ -107,12 +107,12 @@
     methods: {
       getList() {
         //查询列表
-        if (!this.hasPerm('terminal:list')) {
+        if (!this.hasPerm('cdkey:list')) {
           return
         }
         this.listLoading = true;
         this.api({
-          url: "/terminal/listTerminal",
+          url: "/cdkey/list",
           method: "get",
           params: this.listQuery
         }).then(data => {
@@ -138,7 +138,8 @@
       },
       showCreate() {
         //显示新增对话框
-        this.tempArticle.content = "";
+        this.tempArticle.phone = "";
+        this.tempArticle.days = "";
         this.dialogStatus = "create"
         this.dialogFormVisible = true
       },
@@ -149,16 +150,22 @@
         this.dialogStatus = "update"
         this.dialogFormVisible = true
       },
-      createArticle() {
-        //保存新文章
-        this.api({
-          url: "/article/addArticle",
-          method: "post",
-          data: this.tempArticle
-        }).then(() => {
-          this.getList();
-          this.dialogFormVisible = false
-        })
+      createArticle(formName) {
+          this.$refs[formName].validate((valid) => {
+          if (valid) {
+              //保存新文章
+              this.api({
+                url: "/cdkey/generate/send",
+                method: "post",
+                data: this.tempArticle
+              }).then(() => {
+                this.getList();
+                this.dialogFormVisible = false
+              })
+          } else {
+            return false;
+          }
+        });
       },
       updateArticle() {
         //修改文章

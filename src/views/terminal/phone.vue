@@ -3,11 +3,11 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="终端登陆号">
-              <el-input  placeholder="终端登陆号" v-model="listQuery.username"></el-input>
+            <el-form-item label="手机卡号">
+              <el-input  placeholder="手机卡号" v-model="listQuery.phoneNo"></el-input>
             </el-form-item>
-             <el-form-item label="员工姓名">
-              <el-input  placeholder="员工姓名" v-model="listQuery.employeeName"></el-input>
+             <el-form-item label="卡主姓名">
+              <el-input  placeholder="卡主姓名" v-model="listQuery.ownerName"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
@@ -18,11 +18,11 @@
           </el-button>
         </el-form-item> 
         <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">批量模块下载
+          <el-button type="primary" icon="plus" v-if="hasPerm('article:add')">批量模块下载
           </el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">批量上传
+          <el-button type="primary" icon="plus"  v-if="hasPerm('article:add')">批量上传
           </el-button>
         </el-form-item>
       </el-form>
@@ -34,21 +34,21 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="手机卡号" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="password" label="卡主姓名" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="微信号" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="微信昵称" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="身份证号" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="支付密码" style="width: 200px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="流量信息" style="width: 200px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="通话信息" style="width: 200px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="短信信息" style="width: 200px;"> </el-table-column>
-      <el-table-column align="center" prop="employeeName" label="备注" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="status" label="状态" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="phoneNo" label="手机卡号" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="ownerName" label="卡主姓名" style="width: 60px;"> </el-table-column>
+       <el-table-column align="center" prop="idCardNo" label="身份证号" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="wechatNo" label="微信号" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="wechatName" label="微信昵称" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="payPassword" label="支付密码" style="width: 200px;"> </el-table-column>
+      <el-table-column align="center" prop="dataRemain" label="流量信息" style="width: 200px;"> </el-table-column>
+      <el-table-column align="center" prop="callRemain" label="通话信息" style="width: 200px;"> </el-table-column>
+      <el-table-column align="center" prop="msgRemain" label="短信信息" style="width: 200px;"> </el-table-column>
+      <el-table-column align="center" prop="remark" label="备注" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="state" label="状态" style="width: 60px;"></el-table-column>
       <!-- <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column> -->
       <el-table-column align="center" label="创建时间" >
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.createTime.year}}-{{scope.row.createTime.monthValue}}-{{scope.row.createTime.monthValue}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
@@ -67,26 +67,53 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" >
-      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="80px"
-               style='width: 300px; margin-left:50px;'>
-        <el-form-item label="员工姓名" prop="name" >
-          <el-input type="input"   v-model="tempArticle.content"> </el-input>
+      <el-form :inline="true"  class="demo-form-inline" :model="tempArticle" ref="tempArticle" label-position="left" label-width="80px"
+               style='width: 500px; margin-left:50px;'>
+        <el-form-item label="手机卡号" prop="phoneNo" 
+         :rules="[{ required: true, message: '手机卡号不能为空'},  { min: 11, max: 11, message: '长度必须为11位', trigger: 'blur' }]">
+          <el-input type="number"  v-model="tempArticle.phoneNo"> </el-input>
         </el-form-item>
-        <el-form-item label="手机号">
-          <el-input type="input"  v-model="tempArticle.phone"></el-input>
+        <el-form-item label="卡主姓名" prop="ownerName" 
+         :rules="[{ required: true, message: '卡主姓名不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.ownerName"></el-input>
         </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="tempArticle.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
-          </el-select>
+         <el-form-item label="身份证号" prop="idCardNo" 
+         :rules="[{ required: true, message: '身份证号不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.idCardNo"></el-input>
+        </el-form-item>
+         <el-form-item label="微信号" prop="wechatNo" 
+         :rules="[{ required: true, message: '微信号不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.wechatNo"></el-input>
+        </el-form-item>
+         <el-form-item label="微信昵称" prop="wechatName" 
+         :rules="[{ required: true, message: '微信昵称不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.wechatName"></el-input>
+        </el-form-item>
+        <el-form-item label="支付密码" prop="payPassword" 
+         :rules="[{ required: true, message: '支付密码不能为空'}]">
+          <el-input type="password"  v-model="tempArticle.payPassword"></el-input>
+        </el-form-item>
+        <el-form-item label="流量信息" prop="dataRemain" 
+         :rules="[{ required: true, message: '流量信息不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.dataRemain"></el-input>
+        </el-form-item>
+        <el-form-item label="通话信息" prop="callRemain" 
+         :rules="[{ required: true, message: '通话信息不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.callRemain"></el-input>
+        </el-form-item>
+         <el-form-item label="短信信息" prop="msgRemain" 
+         :rules="[{ required: true, message: '短信信息不能为空'}]">
+          <el-input type="input"  v-model="tempArticle.msgRemain"></el-input>
+        </el-form-item>
+         <el-form-item label="备注" prop="remark" >
+          <el-input type="input"  v-model="tempArticle.remark"></el-input>
+        </el-form-item>
+         <el-form-item>
+            <el-button type="primary" v-if="dialogStatus=='create'"  @click="createArticle('tempArticle')">提交</el-button>
+             <el-button type="primary" v-else @click="updateArticle('tempArticle')">修 改</el-button>
         </el-form-item>
       </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button v-if="dialogStatus=='create'" type="success" @click="createArticle">创 建</el-button>
-        <!-- <el-button type="primary" v-else @click="updateArticle">修 改</el-button> -->
-      </div>
+    
     </el-dialog>
   </div>
 </template>
@@ -100,8 +127,8 @@
         listQuery: {
           pageNum: 1,//页码
           pageRow: 50,//每页条数
-          name: '',
-          phone: ''
+          ownerName: '',
+          phoneNo: ''
         },
         dialogStatus: 'create',
         dialogFormVisible: false,
@@ -122,12 +149,12 @@
     methods: {
       getList() {
         //查询列表
-        if (!this.hasPerm('terminal:list')) {
+        if (!this.hasPerm('phone:list')) {
           return
         }
         this.listLoading = true;
         this.api({
-          url: "/terminal/listTerminal",
+          url: "/phone/list",
           method: "get",
           params: this.listQuery
         }).then(data => {
@@ -153,38 +180,70 @@
       },
       showCreate() {
         //显示新增对话框
-        this.tempArticle.content = "";
+        this.tempArticle.phoneNo = "";
+        this.tempArticle.idCardNo = "";
+        this.tempArticle.ownerName = "";
+        this.tempArticle.dataRemain = "";
+        this.tempArticle.callRemain = "";
+        this.tempArticle.msgRemain = "";
+        this.tempArticle.wechatNo = "";
+        this.tempArticle.wechatName = "";
+        this.tempArticle.payPassword = "";
+        
         this.dialogStatus = "create"
         this.dialogFormVisible = true
       },
       showUpdate($index) {
         //显示修改对话框
         this.tempArticle.id = this.list[$index].id;
-        this.tempArticle.content = this.list[$index].f_business;
+        this.tempArticle.content = this.list[$index].content;
+        this.tempArticle.phoneNo = this.list[$index].phoneNo;
+        this.tempArticle.idCardNo = this.list[$index].idCardNo;
+        this.tempArticle.ownerName = this.list[$index].ownerName;
+        this.tempArticle.dataRemain = this.list[$index].dataRemain;
+        this.tempArticle.callRemain = this.list[$index].callRemain;
+        this.tempArticle.msgRemain = this.list[$index].msgRemain;
+        this.tempArticle.wechatNo = this.list[$index].wechatNo;
+        this.tempArticle.wechatName = this.list[$index].wechatName;
+        this.tempArticle.payPassword = this.list[$index].payPassword;
+        this.tempArticle.remark = this.list[$index].remark;
+      
+
         this.dialogStatus = "update"
         this.dialogFormVisible = true
       },
-      createArticle() {
-        //保存新文章
-        this.api({
-          url: "/article/addArticle",
-          method: "post",
-          data: this.tempArticle
-        }).then(() => {
-          this.getList();
-          this.dialogFormVisible = false
-        })
+      createArticle(formName) {
+         this.$refs[formName].validate((valid) => {
+          if (valid) {
+              this.api({
+                url: "/phone/add",
+                method: "post",
+                data: this.tempArticle
+              }).then(() => {
+                this.getList();
+                this.dialogFormVisible = false
+              })
+         } else {
+            return false;
+          }
+        });
       },
-      updateArticle() {
-        //修改文章
-        this.api({
-          url: "/article/updateArticle",
-          method: "post",
-          data: this.tempArticle
-        }).then(() => {
-          this.getList();
-          this.dialogFormVisible = false
-        })
+      updateArticle(formName) {
+         this.$refs[formName].validate((valid) => {
+          if (valid) {
+            //修改文章
+            this.api({
+              url: "/phone/update",
+              method: "post",
+              data: this.tempArticle
+            }).then(() => {
+              this.getList();
+              this.dialogFormVisible = false
+            })
+         } else {
+            return false;
+          }
+        });
       },
     }
   }

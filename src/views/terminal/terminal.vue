@@ -26,16 +26,16 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="password" label="激活码" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="employeeName" label="设备所属省份" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="employeeName" label="设备所属城市" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="imeiNo" label="激活手机IMEI" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="cdkey" label="激活码" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="province" label="设备所属省份" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="city" label="设备所属城市" style="width: 60px;"></el-table-column>
        <el-table-column align="center" prop="city" label="负责区域" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="status" label="状态" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="updateTime" label="员工姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" label="创建时间" width="170">
+      <el-table-column align="center" prop="employeeNo" label="员工姓名" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" label="上次分配" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.expireTime.year}}-{{scope.row.expireTime.monthValue}}-{{scope.row.expireTime.monthValue}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
@@ -114,7 +114,7 @@
         }
         this.listLoading = true;
         this.api({
-          url: "/terminal/listTerminal",
+          url: "/terminal/list",
           method: "get",
           params: this.listQuery
         }).then(data => {

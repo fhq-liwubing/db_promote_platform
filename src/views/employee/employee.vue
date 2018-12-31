@@ -4,10 +4,10 @@
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
             <el-form-item label="员工姓名">
-              <el-input  placeholder="员工姓名" v-model="listQuery.name"></el-input>
+              <el-input  placeholder="员工姓名" v-model="listQuery.username"></el-input>
             </el-form-item>
              <el-form-item label="员工手机号">
-              <el-input  placeholder="员工手机号" v-model="listQuery.phoneNo"></el-input>
+              <el-input  placeholder="员工手机号" v-model="listQuery.selfPhone"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getList">查询</el-button>
@@ -26,17 +26,22 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="name" label="员工姓名" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="phoneNo" label="手机号" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="username" label="员工姓名" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="selfPhone" label="手机号" style="width: 60px;"> </el-table-column>
       <el-table-column align="center" prop="email" label="年龄" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="sex" label="性别" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="status" label="在岗状态" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="state" label="在岗状态" style="width: 60px;"></el-table-column>
         <el-table-column align="center" prop="province" label="籍贯省份" style="width: 60px;"></el-table-column>
      
-       <el-table-column align="center" prop="city" label="负责终端数" style="width: 60px;"></el-table-column>
+       <el-table-column align="center"  label="负责终端数" style="width: 60px;">
+          <template slot-scope="scope">
+             <span>{{scope.row.terminals}}</span>
+           </template>
+
+       </el-table-column>
       <el-table-column align="center" label="入职时间" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.createTime.year}}-{{scope.row.createTime.monthValue}}-{{scope.row.createTime.monthValue}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('employee:update')">
@@ -108,8 +113,8 @@
         listQuery: {
           pageNum: 1,//页码
           pageRow: 50,//每页条数
-          name: '',
-          phoneNo: ''
+          username: '',
+          selfPhone: ''
         },
         province: [],//角色列表
         dialogStatus: 'create',
@@ -155,7 +160,7 @@
         }
         this.listLoading = true;
         this.api({
-          url: "/employee/listEmployee",
+          url: "/employee/list",
           method: "get",
           params: this.listQuery
         }).then(data => {
