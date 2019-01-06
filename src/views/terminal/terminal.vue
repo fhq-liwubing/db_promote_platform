@@ -13,10 +13,10 @@
               <el-button type="primary" @click="getList">查询</el-button>
             </el-form-item>
            <br> 
-        <el-form-item>
+        <!-- <el-form-item>
           <el-button type="primary" icon="plus" @click="showCreate" v-if="hasPerm('article:add')">添加
           </el-button>
-        </el-form-item> 
+        </el-form-item>  -->
       </el-form>
     </div>
     <el-table :data="list" v-loading.body="listLoading" element-loading-text="拼命加载中" border fit
@@ -27,6 +27,7 @@
         </template>
       </el-table-column>
       <el-table-column align="center" prop="imeiNo" label="激活手机IMEI" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="terminalNo" label="终端识别码" style="width: 60px;"></el-table-column>     
       <el-table-column align="center" prop="cdkey" label="激活码" style="width: 60px;"> </el-table-column>
       <el-table-column align="center" prop="province" label="设备所属省份" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="city" label="设备所属城市" style="width: 60px;"></el-table-column>
@@ -35,14 +36,14 @@
       <el-table-column align="center" prop="employeeNo" label="员工姓名" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="上次分配" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.expireTime.year}}-{{scope.row.expireTime.monthValue}}-{{scope.row.expireTime.monthValue}}</span>
+          <span>{{scope.row.expireTime}}</span>
         </template>
       </el-table-column>
-      <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
+      <!-- <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
         <template slot-scope="scope">
           <el-button type="primary" icon="edit" @click="showUpdate(scope.$index)">修改</el-button>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"

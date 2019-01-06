@@ -3,8 +3,8 @@
     <div class="filter-container">
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
-            <el-form-item label="终端登陆号">
-              <el-input  placeholder="终端登陆号" v-model="listQuery.username"></el-input>
+            <el-form-item label="终端识别码">
+              <el-input  placeholder="终端识别码" v-model="listQuery.terminalNo"></el-input>
             </el-form-item>
              <el-form-item label="员工姓名">
               <el-input  placeholder="员工姓名" v-model="listQuery.employeeName"></el-input>
@@ -26,13 +26,13 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="username" label="终端识别码" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="password" label="员工姓名" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="password" label="终端负责区域" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="terminalNo" label="终端识别码" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="employeeName" label="员工姓名" style="width: 60px;"> </el-table-column>
+      <el-table-column align="center" prop="employeeNo" label="员工编号" style="width: 60px;"> </el-table-column>
+      <!-- <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column> -->
       <el-table-column align="center" label="分配时间" width="170">
         <template slot-scope="scope">
-          <span>{{scope.row.createTime}}</span>
+          <span>{{scope.row.assignTime}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">
@@ -51,20 +51,24 @@
       layout="total, sizes, prev, pager, next, jumper">
     </el-pagination>
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" >
-      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="80px"
-               style='width: 300px; margin-left:50px;'>
-        <el-form-item label="员工姓名" prop="name" >
-          <el-input type="input"   v-model="tempArticle.content"> </el-input>
-        </el-form-item>
-        <el-form-item label="手机号">
-          <el-input type="input"  v-model="tempArticle.phone"></el-input>
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-select v-model="tempArticle.sex" placeholder="请选择性别">
-            <el-option label="男" value="男"></el-option>
-            <el-option label="女" value="女"></el-option>
+      <el-form class="small-space" :model="tempArticle" label-position="left" label-width="100px"
+               style='width: 500px; margin-left:50px;'>
+         <el-form-item label="员工姓名" required>
+          <el-select v-model="tempArticle.employeeNo" placeholder="请选择">
+            <el-option
+              v-for="item in employees"
+              :key="item.id"
+              :label="item.username"
+              :value="item.employeeNo">
+            </el-option>
           </el-select>
         </el-form-item>
+      <el-transfer
+          filterable
+          filter-placeholder="请输入手机号"
+          v-model="value2"
+          :data="data2">
+        </el-transfer>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -84,9 +88,10 @@
         listQuery: {
           pageNum: 1,//页码
           pageRow: 50,//每页条数
-          name: '',
-          phone: ''
+          terminalNo: '',
+          employeeName: ''
         },
+        employees: [],//员工列表
         dialogStatus: 'create',
         dialogFormVisible: false,
         textMap: {
@@ -95,23 +100,51 @@
         },
         tempArticle: {
           id: "",
-          content: "",
-          phone: ""
-        }
+          employeeNo: "",
+          terminalNos: []
+        },
+        data2:[],
+        value2: [],
       }
     },
     created() {
       this.getList();
+      this.getEmployees();
     },
     methods: {
+      getEmployees(){
+          //查询所有员工
+        this.api({
+          url: "/employee/list/all",
+          method: "get"
+        }).then(data => {
+          console.log(data);
+          this.employees = data;
+        })
+        //查询所有终端
+        const data3 = [];
+        this.api({
+          url: "/terminal/all",
+          method: "get"
+        }).then(data => {
+          console.log(data);
+          data.forEach((city, index) => {
+          data3.push({
+            label: city,
+            key: city
+            });
+          });
+          this.data2=data3;
+        })
+      },
       getList() {
         //查询列表
-        if (!this.hasPerm('terminal:list')) {
+        if (!this.hasPerm('assignation:terminal/list')) {
           return
         }
         this.listLoading = true;
         this.api({
-          url: "/terminal/listTerminal",
+          url: "/assignation/terminal/list",
           method: "get",
           params: this.listQuery
         }).then(data => {
@@ -137,7 +170,9 @@
       },
       showCreate() {
         //显示新增对话框
-        this.tempArticle.content = "";
+        this.tempArticle.employeeNo = "";
+        this.tempArticle.terminalNos = [];
+         this.value2 = [];
         this.dialogStatus = "create"
         this.dialogFormVisible = true
       },
@@ -149,9 +184,17 @@
         this.dialogFormVisible = true
       },
       createArticle() {
+        if(this.value2.length==0){
+          this.$message.error('请选择要分配的终端！');
+          return ;
+        }else if(this.tempArticle.employeeNo==""){
+          this.$message.error('请选择员工！');
+          return ;
+        }
+        this.tempArticle.terminalNos = this.value2;
         //保存新文章
         this.api({
-          url: "/article/addArticle",
+          url: "/assignation/terminal/assign",
           method: "post",
           data: this.tempArticle
         }).then(() => {

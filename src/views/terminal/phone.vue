@@ -45,10 +45,10 @@
       <el-table-column align="center" prop="msgRemain" label="短信信息" style="width: 200px;"> </el-table-column>
       <el-table-column align="center" prop="remark" label="备注" style="width: 60px;"></el-table-column>
       <el-table-column align="center" prop="state" label="状态" style="width: 60px;"></el-table-column>
-      <!-- <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column> -->
+      <el-table-column align="center" prop="updateTime" label="修改时间" style="width: 60px;"></el-table-column>
       <el-table-column align="center" label="创建时间" >
         <template slot-scope="scope">
-          <span>{{scope.row.createTime.year}}-{{scope.row.createTime.monthValue}}-{{scope.row.createTime.monthValue}}</span>
+          <span>{{scope.row.createTime}}</span>
         </template>
       </el-table-column>
       <el-table-column align="center" label="管理" width="200" v-if="hasPerm('article:update')">

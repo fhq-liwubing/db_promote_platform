@@ -4,12 +4,12 @@
  
       <el-form :inline="true" :model="listQuery" class="demo-form-inline">
             <el-form-item label="短信名称">
-              <el-input  placeholder="短信名称" v-model="listQuery.name"></el-input>
+              <el-input  placeholder="短信名称" v-model="listQuery.templateName"></el-input>
             </el-form-item>
              <el-form-item label="短信类型">
-          <el-select v-model="listQuery.sex" placeholder="短信类型">
-            <el-option label="默认模块1" value="默认模块1"></el-option>
-            <el-option label="默认模块2" value="默认模块2"></el-option>
+          <el-select v-model="listQuery.templateType" placeholder="短信类型">
+            <el-option label="默认模块1" value="1"></el-option>
+            <el-option label="默认模块2" value="2"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -29,9 +29,16 @@
           <span v-text="getIndex(scope.$index)"> </span>
         </template>
       </el-table-column>
-      <el-table-column align="center" prop="name" label="短信名称" style="width: 60px;"></el-table-column>
-      <el-table-column align="center" prop="phoneNo" label="短信类型" style="width: 60px;"> </el-table-column>
-      <el-table-column align="center" prop="email" label="短息内容" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="templateNo" label="短信编号" style="width: 100px;"></el-table-column>
+      <el-table-column align="center" prop="templateName" label="短信名称" style="width: 60px;"></el-table-column>
+      <el-table-column align="center"  label="短信类型" style="width: 60px;">
+         <template slot-scope="scope">
+            <el-tag type="success"  v-if="scope.row.templateType===1">默认模块1</el-tag>
+            <el-tag type="primary"  v-else>默认模块2</el-tag>
+         </template>    
+       </el-table-column>
+      <el-table-column align="center" prop="content" label="短息内容" style="width: 60px;"></el-table-column>
+      <el-table-column align="center" prop="remark" label="备注" style="width: 60px;"> </el-table-column>  
       <el-table-column align="center" label="创建时间" width="170">
         <template slot-scope="scope">
           <span>{{scope.row.createTime}}</span>
@@ -55,22 +62,27 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" >
       <el-form class="small-space" :model="tempArticle" ref="tempArticle"  label-position="left" label-width="80px"
                style='width: 300px; margin-left:50px;'>
-        <el-form-item label="短信名称" prop="name" 
+        <el-form-item label="短信名称" prop="templateName" 
          :rules="[{ required: true, message: '短信名称'}]">
-          <el-input type="name"   v-model="tempArticle.name" > </el-input>
+          <el-input type="input"   v-model="tempArticle.templateName" > </el-input>
         </el-form-item>
-        <el-form-item label="短信类型">
-          <el-select v-model="tempArticle.sex" placeholder="短信类型">
-            <el-option label="默认模块1" value="默认模块1"></el-option>
-            <el-option label="默认模块2" value="默认模块2"></el-option>
+        <el-form-item label="短信类型"  prop="templateType"
+        :rules="[{ required: true, message: '短信名称'}]">
+          <el-select v-model="tempArticle.templateType" placeholder="短信类型">
+            <el-option label="默认模块1" value="1"></el-option>
+            <el-option label="默认模块2" value="2"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="短信内容" prop="phone" 
+        <el-form-item label="短信内容" prop="content" 
          :rules="[{ required: true, message: '短信内容'}]">
-          <el-input type="phone"  v-model="tempArticle.phone"></el-input>
+          <el-input type="textarea"  :rows="3" v-model="tempArticle.content"></el-input>
+        </el-form-item>
+           <el-form-item label="备注" >
+          <el-input type="textarea"  :rows="2" v-model="tempArticle.remark"></el-input>
         </el-form-item>
          <el-form-item>
-            <el-button type="primary" @click="createArticle('tempArticle')">提交</el-button>
+            <el-button type="primary"  v-if="dialogStatus=='create'" @click="createArticle('tempArticle')">提交</el-button>
+              <el-button type="primary" v-else @click="updateArticle('tempArticle')">修 改</el-button>
         </el-form-item>
       
       </el-form>
@@ -88,8 +100,8 @@
         listQuery: {
           pageNum: 1,//页码
           pageRow: 50,//每页条数
-          name: '',
-          phoneNo: ''
+          templateName: '',
+          templateType: ''
         },
         province: [],//角色列表
         dialogStatus: 'create',
@@ -100,8 +112,11 @@
         },
         tempArticle: {
           id: "",
+          templateName: "",
           content: "",
-          phone: ""
+          remark: "",
+          templateType: "",
+          templateNo : ""
         }
       }
     },
@@ -111,12 +126,12 @@
     methods: {
       getList() {
         //查询列表
-        if (!this.hasPerm('employee:list')) {
+        if (!this.hasPerm('msg:/template/list')) {
           return
         }
         this.listLoading = true;
         this.api({
-          url: "/employee/listEmployee",
+          url: "/msg/template/list",
           method: "get",
           params: this.listQuery
         }).then(data => {
@@ -142,14 +157,20 @@
       },
       showCreate() {
         //显示新增对话框
+        this.tempArticle.templateType = "";
+        this.tempArticle.templateName = "";
         this.tempArticle.content = "";
+        this.tempArticle.remark = "";
         this.dialogStatus = "create"
         this.dialogFormVisible = true
       },
       showUpdate($index) {
         //显示修改对话框
-        this.tempArticle.id = this.list[$index].id;
-        this.tempArticle.content = this.list[$index].f_business;
+        this.tempArticle.templateNo = this.list[$index].templateNo;
+        this.tempArticle.templateType = this.list[$index].templateType;
+        this.tempArticle.templateName = this.list[$index].templateName;
+        this.tempArticle.content = this.list[$index].content;
+        this.tempArticle.remark = this.list[$index].remark;
         this.dialogStatus = "update"
         this.dialogFormVisible = true
       },
@@ -157,10 +178,9 @@
         console.log(this.tempArticle.province);
         this.$refs[formName].validate((valid) => {
           if (valid) {
-
            //保存新文章
             this.api({
-              url: "/article/addArticle",
+              url: "/msg/template/add",
               method: "post",
               data: this.tempArticle
             }).then(() => {
@@ -174,16 +194,23 @@
         });
         
       },
-      updateArticle() {
-        //修改文章
-        this.api({
-          url: "/article/updateArticle",
-          method: "post",
-          data: this.tempArticle
-        }).then(() => {
-          this.getList();
-          this.dialogFormVisible = false
-        })
+      updateArticle(formName) {
+           this.$refs[formName].validate((valid) => {
+          if (valid) {
+            //修改文章
+            this.api({
+              url: "/msg/template/update",
+              method: "post",
+              data: this.tempArticle
+            }).then(() => {
+              this.getList();
+              this.dialogFormVisible = false
+            })
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
       },
     }
   }
